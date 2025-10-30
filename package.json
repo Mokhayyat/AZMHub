@@ -1,0 +1,45 @@
+{
+  "name": "azm-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AZM Mentorship Platform – Node/Express API with MongoDB, JWT, Stripe, Cloudinary, Passport OAuth, Socket.io.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "heroku-postbuild": "echo Skipping frontend build"
+  },
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.41.3",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.4.0",
+    "express-validator": "^7.2.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^5.9.2",
+    "mongoose": "^7.6.11",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.2",
+    "multer-storage-cloudinary": "^4.0.0",
+    "nodemailer": "^6.9.15",
+    "openai": "3.3.0",
+    "passport": "^0.7.0",
+    "passport-facebook": "^3.0.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-linkedin-oauth2": "^2.0.0",
+    "socket.io": "^4.7.5",
+    "stripe": "^16.6.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.7",
+    "supertest": "^7.0.0"
+  }
+}
