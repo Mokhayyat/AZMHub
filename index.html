@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZM - Connect Students with Mentors</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://unpkg.com/splitting@1.0.6/dist/splitting.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/splitting@1.0.6/dist/splitting.css">
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --azm-teal: #5CE1E6;
+            --azm-dark: #2D3748;
+            --azm-gray: #64748B;
+            --azm-light: #F8FAFC;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+        
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(92, 225, 230, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%),
+                        url('resources/hero-background.jpg') center/cover;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 70%, rgba(92, 225, 230, 0.3) 0%, transparent 50%);
+            z-index: 1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(92, 225, 230, 0.2);
+        }
+        
+        .mentor-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(92, 225, 230, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .mentor-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(92, 225, 230, 0.15);
+            border-color: var(--azm-teal);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--azm-teal) 0%, #4FD1C7 100%);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(92, 225, 230, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--azm-teal);
+            border: 2px solid var(--azm-teal);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--azm-teal);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .feature-icon {
+            background: linear-gradient(135deg, var(--azm-teal) 0%, #4FD1C7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stats-counter {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--azm-teal);
+        }
+        
+        .floating-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            background: var(--azm-teal);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .reveal-text.revealed {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.6s ease;
+        }
+        
+        .mentor-filter-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .mentor-filter-btn.active {
+            background: var(--azm-teal);
+            color: white;
+        }
+        
+        .mentor-filter-btn:hover {
+            background: rgba(92, 225, 230, 0.1);
+            color: var(--azm-teal);
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- Navigation -->
+    <nav class="glass-nav fixed top-0 left-0 right-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="font-display font-bold text-2xl text-gray-800">
+                AZM<span class="text-teal-400">.</span>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="text-gray-700 hover:text-teal-400 transition-colors font-medium">Home</a>
+                <a href="mentors.html" class="text-gray-700 hover:text-teal-400 transition-colors font-medium">Mentors</a>
+                <a href="events.html" class="text-gray-700 hover:text-teal-400 transition-colors font-medium">Events</a>
+                <a href="podcasts.html" class="text-gray-700 hover:text-teal-400 transition-colors font-medium">Podcasts</a>
+                <a href="contact.html" class="text-gray-700 hover:text-teal-400 transition-colors font-medium">Contact</a>
+                <button class="btn-primary px-6 py-2 rounded-full font-medium">Join AZM</button>
+            </div>
+            <button class="md:hidden text-gray-700" id="mobile-menu-btn">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="index.html" class="block px-3 py-2 text-gray-700 hover:text-teal-400 transition-colors font-medium">Home</a>
+                <a href="mentors.html" class="block px-3 py-2 text-gray-700 hover:text-teal-400 transition-colors font-medium">Mentors</a>
+                <a href="events.html" class="block px-3 py-2 text-gray-700 hover:text-teal-400 transition-colors font-medium">Events</a>
+                <a href="podcasts.html" class="block px-3 py-2 text-gray-700 hover:text-teal-400 transition-colors font-medium">Podcasts</a>
+                <a href="contact.html" class="block px-3 py-2 text-gray-700 hover:text-teal-400 transition-colors font-medium">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-bg min-h-screen flex items-center pt-20">
+        <div class="floating-particles" id="particles"></div>
+        <div class="hero-content max-w-7xl mx-auto px-6 py-20">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-8">
+                    <h1 class="font-display font-bold text-5xl lg:text-6xl text-gray-800 leading-tight">
+                        Connect with 
+                        <span class="text-teal-400" id="typed-text"></span>
+                        <span class="reveal-text">Through AZM</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 leading-relaxed reveal-text">
+                        Join our innovative platform that connects students with industry-leading mentors through engaging events, workshops, and podcasts. Build meaningful connections that shape your future.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 reveal-text">
+                        <button class="btn-primary px-8 py-4 rounded-full font-semibold text-lg">
+                            Find Your Mentor
+                        </button>
+                        <button class="btn-secondary px-8 py-4 rounded-full font-semibold text-lg">
+                            Explore Events
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-3 gap-8 pt-8 reveal-text">
+                        <div class="text-center">
+                            <div class="stats-counter" data-target="500">0</div>
+                            <p class="text-gray-600 font-medium">Students Connected</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="stats-counter" data-target="50">0</div>
+                            <p class="text-gray-600 font-medium">Expert Mentors</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="stats-counter" data-target="200">0</div>
+                            <p class="text-gray-600 font-medium">Success Stories</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl">
+                        <img src="resources/hero-background.jpg" alt="AZM Platform" class="w-full h-64 object-cover rounded-2xl">
+                        <div class="mt-6 space-y-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Live Mentoring</h3>
+                                    <p class="text-gray-600 text-sm">Connect with experts in real-time</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-display font-bold text-4xl text-gray-800 mb-4">Why Choose AZM?</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">We create meaningful connections between students and industry professionals through innovative mentorship programs and engaging events.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-display font-semibold text-xl text-gray-800 mb-4">Expert Mentors</h3>
+                    <p class="text-gray-600 leading-relaxed">Connect with industry leaders, entrepreneurs, and professionals who are passionate about sharing their knowledge and experience.</p>
+                </div>
+                <div class="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 0V6a2 2 0 012-2h4a2 2 0 012 2v1m-6 0h8m-8 0v10a2 2 0 002 2h8a2 2 0 002-2V8m-8 0V6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-display font-semibold text-xl text-gray-800 mb-4">Engaging Events</h3>
+                    <p class="text-gray-600 leading-relaxed">Participate in padel tournaments, workshops, and networking events that combine learning with fun and meaningful connections.</p>
+                </div>
+                <div class="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
+                    <div class="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-display font-semibold text-xl text-gray-800 mb-4">Inspiring Podcasts</h3>
+                    <p class="text-gray-600 leading-relaxed">Listen to exclusive podcast episodes featuring mentor interviews, success stories, and valuable insights from industry experts.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mentors Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-display font-bold text-4xl text-gray-800 mb-4">Meet Our Mentors</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Connect with experienced professionals from various industries who are ready to guide and inspire the next generation of leaders.</p>
+            </div>
+            
+            <!-- Mentor Filters -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <button class="mentor-filter-btn active px-6 py-3 rounded-full font-medium" data-filter="all">All Mentors</button>
+                <button class="mentor-filter-btn px-6 py-3 rounded-full font-medium" data-filter="entrepreneurship">Entrepreneurship</button>
+                <button class="mentor-filter-btn px-6 py-3 rounded-full font-medium" data-filter="technology">Technology</button>
+                <button class="mentor-filter-btn px-6 py-3 rounded-full font-medium" data-filter="finance">Finance</button>
+                <button class="mentor-filter-btn px-6 py-3 rounded-full font-medium" data-filter="marketing">Marketing</button>
+                <button class="mentor-filter-btn px-6 py-3 rounded-full font-medium" data-filter="leadership">Leadership</button>
+            </div>
+
+            <!-- Mentor Grid -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="mentor-grid">
+                <!-- Mentor Card 1 -->
+                <div class="mentor-card rounded-2xl p-6" data-category="entrepreneurship leadership">
+                    <div class="text-center mb-6">
+                        <img src="resources/mentor-sarah-chen.jpg" alt="Sarah Chen" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                        <h3 class="font-display font-semibold text-xl text-gray-800">Sarah Chen</h3>
+                        <p class="text-gray-600">Serial Entrepreneur & Investor</p>
+                        <div class="flex justify-center items-center mt-2">
+                            <div class="flex text-yellow-400">
+                                <span>★★★★★</span>
+                            </div>
+                            <span class="ml-2 text-gray-600 text-sm">4.9 (127 reviews)</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 mb-6">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Startups</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Venture Capital</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Leadership</span>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Founded 3 successful startups, raised $50M+ in funding. Expert in scaling businesses and building high-performance teams.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-lg font-semibold text-gray-800">
+                            <span class="text-teal-400">$</span>150/session
+                        </div>
+                        <button class="btn-primary px-6 py-2 rounded-full font-medium text-sm">
+                            Book Session
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mentor Card 2 -->
+                <div class="mentor-card rounded-2xl p-6" data-category="technology entrepreneurship">
+                    <div class="text-center mb-6">
+                        <img src="resources/mentor-marcus-rodriguez.jpg" alt="Marcus Rodriguez" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                        <h3 class="font-display font-semibold text-xl text-gray-800">Marcus Rodriguez</h3>
+                        <p class="text-gray-600">Tech Lead & AI Specialist</p>
+                        <div class="flex justify-center items-center mt-2">
+                            <div class="flex text-yellow-400">
+                                <span>★★★★★</span>
+                            </div>
+                            <span class="ml-2 text-gray-600 text-sm">4.8 (89 reviews)</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 mb-6">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">AI/ML</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Software Engineering</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Product Strategy</span>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            15+ years in tech, led teams at Google and Microsoft. Specializes in AI implementation and technical leadership development.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-lg font-semibold text-gray-800">
+                            <span class="text-teal-400">$</span>120/session
+                        </div>
+                        <button class="btn-primary px-6 py-2 rounded-full font-medium text-sm">
+                            Book Session
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mentor Card 3 -->
+                <div class="mentor-card rounded-2xl p-6" data-category="finance leadership">
+                    <div class="text-center mb-6">
+                        <img src="resources/mentor-david-kim.jpg" alt="David Kim" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                        <h3 class="font-display font-semibold text-xl text-gray-800">David Kim</h3>
+                        <p class="text-gray-600">Investment Banker & CFO</p>
+                        <div class="flex justify-center items-center mt-2">
+                            <div class="flex text-yellow-400">
+                                <span>★★★★★</span>
+                            </div>
+                            <span class="ml-2 text-gray-600 text-sm">4.9 (156 reviews)</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 mb-6">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Investment Banking</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Financial Strategy</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Corporate Finance</span>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Former Goldman Sachs VP, managed $2B+ in transactions. Expert in financial modeling, investment strategy, and career development.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-lg font-semibold text-gray-800">
+                            <span class="text-teal-400">$</span>200/session
+                        </div>
+                        <button class="btn-primary px-6 py-2 rounded-full font-medium text-sm">
+                            Book Session
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mentor Card 4 -->
+                <div class="mentor-card rounded-2xl p-6" data-category="marketing entrepreneurship">
+                    <div class="text-center mb-6">
+                        <img src="resources/mentor-elena-voss.jpg" alt="Elena Voss" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                        <h3 class="font-display font-semibold text-xl text-gray-800">Elena Voss</h3>
+                        <p class="text-gray-600">Marketing Director & Brand Strategist</p>
+                        <div class="flex justify-center items-center mt-2">
+                            <div class="flex text-yellow-400">
+                                <span>★★★★★</span>
+                            </div>
+                            <span class="ml-2 text-gray-600 text-sm">4.8 (94 reviews)</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 mb-6">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Digital Marketing</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Brand Strategy</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Growth Hacking</span>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Led marketing at 3 unicorn startups, expert in brand building and customer acquisition. Helped companies scale from $1M to $100M+ ARR.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-lg font-semibold text-gray-800">
+                            <span class="text-teal-400">$</span>130/session
+                        </div>
+                        <button class="btn-primary px-6 py-2 rounded-full font-medium text-sm">
+                            Book Session
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mentor Card 5 -->
+                <div class="mentor-card rounded-2xl p-6" data-category="leadership technology">
+                    <div class="text-center mb-6">
+                        <img src="resources/mentor-priya-patel.jpg" alt="Priya Patel" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                        <h3 class="font-display font-semibold text-xl text-gray-800">Priya Patel</h3>
+                        <p class="text-gray-600">CTO & Engineering Leader</p>
+                        <div class="flex justify-center items-center mt-2">
+                            <div class="flex text-yellow-400">
+                                <span>★★★★★</span>
+                            </div>
+                            <span class="ml-2 text-gray-600 text-sm">4.9 (112 reviews)</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 mb-6">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Engineering Management</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Tech Leadership</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Team Building</span>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            CTO with 12+ years experience scaling engineering teams from 5 to 500+. Expert in technical leadership and organizational development.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-lg font-semibold text-gray-800">
+                            <span class="text-teal-400">$</span>180/session
+                        </div>
+                        <button class="btn-primary px-6 py-2 rounded-full font-medium text-sm">
+                            Book Session
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mentor Card 6 -->
+                <div class="mentor-card rounded-2xl p-6" data-category="entrepreneurship finance">
+                    <div class="text-center mb-6">
+                        <img src="resources/mentor-sarah-chen.jpg" alt="Michael Thompson" class="w-24 h-24 rounded-full mx-auto mb-4 object-cover">
+                        <h3 class="font-display font-semibold text-xl text-gray-800">Michael Thompson</h3>
+                        <p class="text-gray-600">Startup Founder & Business Coach</p>
+                        <div class="flex justify-center items-center mt-2">
+                            <div class="flex text-yellow-400">
+                                <span>★★★★★</span>
+                            </div>
+                            <span class="ml-2 text-gray-600 text-sm">4.8 (78 reviews)</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3 mb-6">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Business Strategy</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Fundraising</span>
+                            <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-sm font-medium">Product Development</span>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed">
+                            Founded and sold 2 startups for $50M+. Now helps early-stage founders with product-market fit, fundraising, and scaling strategies.
+                        </p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-lg font-semibold text-gray-800">
+                            <span class="text-teal-400">$</span>160/session
+                        </div>
+                        <button class="btn-primary px-6 py-2 rounded-full font-medium text-sm">
+                            Book Session
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <button class="btn-secondary px-8 py-4 rounded-full font-semibold">
+                    View All Mentors
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-gradient-to-r from-teal-400 to-cyan-400">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="font-display font-bold text-4xl text-white mb-6">Ready to Start Your Journey?</h2>
+            <p class="text-xl text-white/90 mb-8 leading-relaxed">
+                Join thousands of students who have transformed their careers through meaningful mentorship connections. Your future mentor is just a click away.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-white text-teal-400 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 transition-colors">
+                    Sign Up as Student
+                </button>
+                <button class="border-2 border-white text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-white hover:text-teal-400 transition-colors">
+                    Apply as Mentor
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="font-display font-bold text-2xl mb-4">
+                        AZM<span class="text-teal-400">.</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        Connecting students with industry mentors through innovative platforms and engaging events.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Platform</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Find Mentors</a></li>
+                        <li><a href="events.html" class="hover:text-teal-400 transition-colors">Events</a></li>
+                        <li><a href="podcasts.html" class="hover:text-teal-400 transition-colors">Podcasts</a></li>
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Success Stories</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="contact.html" class="hover:text-teal-400 transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Community</a></li>
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.347-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 AZM Platform. All rights reserved. Empowering the next generation through mentorship.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

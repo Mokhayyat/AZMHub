@@ -1,0 +1,333 @@
+# AZM Platform - Mentorship & Networking Platform
+
+A modern, full-stack mentorship platform connecting students with industry experts through events, workshops, and personalized mentoring sessions.
+
+## 🌟 Features
+
+### Frontend Features
+- **Modern Responsive Design** - Clean, professional interface with smooth animations
+- **Interactive Homepage** - Hero section with typewriter effects and floating particles
+- **Mentor Discovery** - Advanced filtering and search functionality
+- **Event Management** - Calendar integration and booking system
+- **Podcast Platform** - Audio player with episode management
+- **Real-time Chat** - Instant messaging between users
+- **Contact & Support** - Comprehensive contact forms and FAQ system
+
+### Backend Features
+- **Authentication System** - JWT-based secure authentication
+- **User Management** - Role-based access control (Student, Mentor, Admin)
+- **Mentor Profiles** - Detailed mentor information and availability
+- **Booking System** - Session scheduling and management
+- **Event Management** - Event creation, registration, and feedback
+- **Payment Processing** - Stripe integration for paid services
+- **Real-time Communication** - Socket.io for chat and video calls
+- **AI Integration** - OpenAI-powered mentor matching system
+
+## 🛠️ Technology Stack
+
+### Frontend
+- **HTML5** - Semantic markup and modern web standards
+- **Tailwind CSS** - Utility-first CSS framework
+- **JavaScript ES6+** - Modern JavaScript features
+- **Anime.js** - Smooth animations and transitions
+- **Typed.js** - Typewriter text effects
+- **Splide.js** - Carousel and slider components
+
+### Backend
+- **Node.js** - JavaScript runtime
+- **Express.js** - Web application framework
+- **MongoDB** - NoSQL database
+- **Mongoose** - MongoDB object modeling
+- **Socket.io** - Real-time bidirectional communication
+- **JWT** - JSON Web Tokens for authentication
+- **Stripe** - Payment processing
+- **OpenAI** - AI-powered features
+
+## 📁 Project Structure
+
+```
+azm-platform/
+├── public/                 # Static files
+│   ├── resources/          # Images and media
+│   └── index.html          # Main entry point
+├── routes/                 # API routes
+│   ├── auth.js            # Authentication endpoints
+│   ├── mentors.js         # Mentor management
+│   ├── events.js          # Event management
+│   ├── bookings.js        # Booking system
+│   └── ...
+├── models/                 # Database models
+│   ├── User.js            # User schema
+│   ├── Mentor.js          # Mentor schema
+│   ├── Event.js           # Event schema
+│   └── Booking.js         # Booking schema
+├── middleware/             # Custom middleware
+│   └── auth.js            # Authentication middleware
+├── uploads/                # File uploads directory
+├── server.js              # Main server file
+├── main.js                # Frontend JavaScript
+├── test-backend.js        # Backend test suite
+├── test-frontend.html     # Frontend test page
+└── package.json           # Dependencies and scripts
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (v14 or higher)
+- MongoDB (v4.0 or higher)
+- npm or yarn package manager
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd azm-platform
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+4. **Start MongoDB**
+   ```bash
+   mongod
+   ```
+
+5. **Run the application**
+   ```bash
+   # Development mode
+   npm run dev
+   
+   # Production mode
+   npm start
+   ```
+
+6. **Access the application**
+   - Frontend: http://localhost:3000
+   - API: http://localhost:3000/api
+
+## 🔧 Configuration
+
+### Environment Variables (.env)
+
+```env
+# Server Configuration
+NODE_ENV=development
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/azm-platform
+FRONTEND_URL=http://localhost:3000
+
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key
+JWT_EXPIRE=30d
+
+# Email Configuration
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-email-password
+
+# Payment Configuration
+STRIPE_PUBLISHABLE_KEY=pk_test_your-stripe-key
+STRIPE_SECRET_KEY=sk_test_your-stripe-key
+
+# AI Configuration
+OPENAI_API_KEY=sk-your-openai-api-key
+
+# Cloud Storage
+CLOUDINARY_CLOUD_NAME=your-cloudinary-name
+CLOUDINARY_API_KEY=your-cloudinary-key
+CLOUDINARY_API_SECRET=your-cloudinary-secret
+```
+
+## 📱 Pages & Features
+
+### Homepage (index.html)
+- Hero section with animated text
+- Feature highlights
+- Mentor showcase
+- Statistics counter
+- Call-to-action sections
+
+### Mentors Page (mentors.html)
+- Mentor directory with filtering
+- Detailed mentor profiles
+- Booking system integration
+- Rating and review system
+
+### Events Page (events.html)
+- Event calendar and listings
+- Registration system
+- Event details and agenda
+- Feedback and rating system
+
+### Podcasts Page (podcasts.html)
+- Episode library
+- Audio player
+- Episode categorization
+- Download and sharing options
+
+### Contact Page (contact.html)
+- Contact forms
+- FAQ section
+- Support chat widget
+- Location and contact information
+
+## 🔌 API Endpoints
+
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user
+- `PUT /api/auth/update-profile` - Update user profile
+
+### Mentors
+- `GET /api/mentors` - Get all mentors
+- `GET /api/mentors/:id` - Get mentor by ID
+- `POST /api/mentors` - Create mentor profile
+- `PUT /api/mentors/:id` - Update mentor profile
+- `GET /api/mentors/:id/availability` - Get mentor availability
+
+### Events
+- `GET /api/events` - Get all events
+- `GET /api/events/:id` - Get event by ID
+- `POST /api/events` - Create event
+- `POST /api/events/:id/register` - Register for event
+- `POST /api/events/:id/feedback` - Submit event feedback
+
+### Bookings
+- `GET /api/bookings` - Get user bookings
+- `POST /api/bookings` - Create booking
+- `PUT /api/bookings/:id` - Update booking
+- `DELETE /api/bookings/:id` - Cancel booking
+- `POST /api/bookings/:id/feedback` - Submit session feedback
+
+## 🧪 Testing
+
+### Frontend Testing
+Open `test-frontend.html` in your browser to run comprehensive frontend tests.
+
+### Backend Testing
+```bash
+# Run backend tests
+node test-backend.js
+```
+
+### Manual Testing
+1. **User Registration** - Create student and mentor accounts
+2. **Mentor Profile** - Complete mentor profile setup
+3. **Event Creation** - Create and publish events
+4. **Booking System** - Book mentoring sessions
+5. **Payment Flow** - Test payment processing
+6. **Real-time Features** - Test chat and notifications
+
+## 🚀 Deployment
+
+### Production Deployment
+1. **Set production environment variables**
+2. **Build optimized frontend**
+3. **Configure production database**
+4. **Set up SSL certificates**
+5. **Configure CDN for static assets**
+6. **Set up monitoring and logging**
+
+### Docker Deployment
+```dockerfile
+# Dockerfile
+FROM node:14
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+## 🔒 Security Features
+
+- **JWT Authentication** - Secure token-based auth
+- **Input Validation** - Server-side validation
+- **Rate Limiting** - API rate limiting
+- **Helmet.js** - Security headers
+- **CORS Configuration** - Cross-origin resource sharing
+- **MongoDB Injection Protection** - Parameterized queries
+- **File Upload Security** - File type and size validation
+
+## 📈 Performance Optimization
+
+- **Compression** - Gzip compression for responses
+- **Caching** - Browser and server-side caching
+- **Image Optimization** - WebP format with fallbacks
+- **Lazy Loading** - On-demand content loading
+- **CDN Integration** - Static asset delivery
+- **Database Indexing** - Optimized query performance
+
+## 🎨 Design System
+
+### Colors
+- **Primary**: #5CE1E6 (Teal)
+- **Secondary**: #4FD1C7 (Cyan)
+- **Dark**: #2D3748 (Gray)
+- **Light**: #F8FAFC (Light Gray)
+
+### Typography
+- **Display Font**: Poppins (Headings)
+- **Body Font**: Inter (Content)
+
+### Components
+- **Buttons**: Gradient backgrounds with hover effects
+- **Cards**: Glass-morphism design with shadows
+- **Forms**: Clean, modern input styling
+- **Modals**: Backdrop blur effects
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 👥 Team
+
+- **Frontend Development** - Modern UI/UX implementation
+- **Backend Development** - API and database architecture
+- **DevOps** - Deployment and infrastructure
+- **Design** - Visual design and user experience
+
+## 📞 Support
+
+For support, email support@azmplatform.com or join our Slack channel.
+
+## 🔄 Changelog
+
+### v1.0.0 (Current)
+- Initial platform launch
+- Core mentorship features
+- Event management system
+- Basic payment integration
+- Real-time chat functionality
+
+### Roadmap
+- Mobile app development
+- Advanced AI matching
+- Video conferencing integration
+- Multi-language support
+- Advanced analytics dashboard
+
+---
+
+**Built with ❤️ for the mentorship community**

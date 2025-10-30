@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - AZM Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --azm-teal: #5CE1E6;
+            --azm-dark: #2D3748;
+            --azm-gray: #64748B;
+            --azm-light: #F8FAFC;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+        
+        .font-display {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(92, 225, 230, 0.2);
+        }
+        
+        .event-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(92, 225, 230, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(92, 225, 230, 0.15);
+            border-color: var(--azm-teal);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--azm-teal) 0%, #4FD1C7 100%);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(92, 225, 230, 0.3);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--azm-teal);
+            border: 2px solid var(--azm-teal);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--azm-teal);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .event-filter-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .event-filter-btn.active {
+            background: var(--azm-teal);
+            color: white;
+        }
+        
+        .event-filter-btn:hover {
+            background: rgba(92, 225, 230, 0.1);
+            color: var(--azm-teal);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, var(--azm-teal) 0%, #4FD1C7 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #e2e8f0;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .calendar-day {
+            background: white;
+            padding: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .calendar-day:hover {
+            background: rgba(92, 225, 230, 0.1);
+        }
+        
+        .calendar-day.has-event {
+            background: rgba(92, 225, 230, 0.2);
+            color: var(--azm-teal);
+            font-weight: 600;
+        }
+        
+        .calendar-day.selected {
+            background: var(--azm-teal);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- Navigation -->
+    <nav class="glass-nav fixed top-0 left-0 right-0 z-50 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="font-display font-bold text-2xl text-gray-800">
+                <a href="index.html">AZM<span class="text-teal-400">.</span></a>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-gray-700 hover:text-teal-400 transition-colors font-medium">Home</a>
+                <a href="mentors.html" class="text-gray-700 hover:text-teal-400 transition-colors font-medium">Mentors</a>
+                <a href="events.html" class="text-teal-400 font-medium">Events</a>
+                <a href="podcasts.html" class="text-gray-700 hover:text-teal-400 transition-colors font-medium">Podcasts</a>
+                <a href="contact.html" class="text-gray-700 hover:text-teal-400 transition-colors font-medium">Contact</a>
+                <button class="btn-primary px-6 py-2 rounded-full font-medium">Join AZM</button>
+            </div>
+            <button class="md:hidden text-gray-700" id="mobile-menu-btn">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="index.html" class="block px-3 py-2 text-gray-700 hover:text-teal-400 transition-colors font-medium">Home</a>
+                <a href="mentors.html" class="block px-3 py-2 text-gray-700 hover:text-teal-400 transition-colors font-medium">Mentors</a>
+                <a href="events.html" class="block px-3 py-2 text-teal-400 font-medium">Events</a>
+                <a href="podcasts.html" class="block px-3 py-2 text-gray-700 hover:text-teal-400 transition-colors font-medium">Podcasts</a>
+                <a href="contact.html" class="block px-3 py-2 text-gray-700 hover:text-teal-400 transition-colors font-medium">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 bg-gradient-to-br from-teal-50 to-cyan-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h1 class="font-display font-bold text-5xl text-gray-800 mb-6">Upcoming Events</h1>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    Join our dynamic events including padel tournaments, workshops, and networking sessions. Connect with mentors and peers in engaging environments.
+                </p>
+            </div>
+            
+            <!-- Event Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-teal-400 mb-2">15+</div>
+                    <p class="text-gray-600">Monthly Events</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-teal-400 mb-2">500+</div>
+                    <p class="text-gray-600">Participants</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-teal-400 mb-2">25+</div>
+                    <p class="text-gray-600">Expert Mentors</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-teal-400 mb-2">95%</div>
+                    <p class="text-gray-600">Satisfaction Rate</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Calendar -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-3 gap-12">
+                <!-- Calendar -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-display font-semibold text-xl text-gray-800">December 2024</h3>
+                            <div class="flex space-x-2">
+                                <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                    </svg>
+                                </button>
+                                <button class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Calendar Header -->
+                        <div class="grid grid-cols-7 gap-1 mb-2">
+                            <div class="text-center text-sm font-medium text-gray-500 py-2">Sun</div>
+                            <div class="text-center text-sm font-medium text-gray-500 py-2">Mon</div>
+                            <div class="text-center text-sm font-medium text-gray-500 py-2">Tue</div>
+                            <div class="text-center text-sm font-medium text-gray-500 py-2">Wed</div>
+                            <div class="text-center text-sm font-medium text-gray-500 py-2">Thu</div>
+                            <div class="text-center text-sm font-medium text-gray-500 py-2">Fri</div>
+                            <div class="text-center text-sm font-medium text-gray-500 py-2">Sat</div>
+                        </div>
+                        
+                        <!-- Calendar Days -->
+                        <div class="calendar-grid">
+                            <div class="calendar-day text-gray-400">1</div>
+                            <div class="calendar-day text-gray-400">2</div>
+                            <div class="calendar-day text-gray-400">3</div>
+                            <div class="calendar-day text-gray-400">4</div>
+                            <div class="calendar-day text-gray-400">5</div>
+                            <div class="calendar-day text-gray-400">6</div>
+                            <div class="calendar-day text-gray-400">7</div>
+                            <div class="calendar-day">8</div>
+                            <div class="calendar-day">9</div>
+                            <div class="calendar-day">10</div>
+                            <div class="calendar-day">11</div>
+                            <div class="calendar-day">12</div>
+                            <div class="calendar-day">13</div>
+                            <div class="calendar-day">14</div>
+                            <div class="calendar-day has-event" data-event="padel-tournament">15</div>
+                            <div class="calendar-day">16</div>
+                            <div class="calendar-day has-event" data-event="workshop">17</div>
+                            <div class="calendar-day">18</div>
+                            <div class="calendar-day">19</div>
+                            <div class="calendar-day has-event" data-event="networking">20</div>
+                            <div class="calendar-day">21</div>
+                            <div class="calendar-day">22</div>
+                            <div class="calendar-day">23</div>
+                            <div class="calendar-day">24</div>
+                            <div class="calendar-day">25</div>
+                            <div class="calendar-day">26</div>
+                            <div class="calendar-day">27</div>
+                            <div class="calendar-day">28</div>
+                            <div class="calendar-day">29</div>
+                            <div class="calendar-day">30</div>
+                            <div class="calendar-day">31</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Event Filters and List -->
+                <div class="lg:col-span-2">
+                    <!-- Event Filters -->
+                    <div class="flex flex-wrap gap-4 mb-8">
+                        <button class="event-filter-btn active px-6 py-3 rounded-full font-medium" data-filter="all">All Events</button>
+                        <button class="event-filter-btn px-6 py-3 rounded-full font-medium" data-filter="tournament">Padel Tournaments</button>
+                        <button class="event-filter-btn px-6 py-3 rounded-full font-medium" data-filter="workshop">Workshops</button>
+                        <button class="event-filter-btn px-6 py-3 rounded-full font-medium" data-filter="networking">Networking</button>
+                    </div>
+                    
+                    <!-- Events Grid -->
+                    <div class="space-y-8" id="events-container">
+                        <!-- Event Card 1 -->
+                        <div class="event-card rounded-2xl p-6" data-category="tournament">
+                            <div class="grid md:grid-cols-3 gap-6">
+                                <div class="md:col-span-1">
+                                    <img src="resources/event-padel-tournament.jpg" alt="Padel Tournament" class="w-full h-48 object-cover rounded-xl">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="bg-teal-100 text-teal-700 px-3 py-1 rounded-full text-sm font-medium">
+                                                Tournament
+                                            </div>
+                                            <div class="text-gray-500 text-sm">Dec 15, 2024</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-2xl font-bold text-gray-800">$45</div>
+                                            <div class="text-gray-500 text-sm">per person</div>
+                                        </div>
+                                    </div>
+                                    <h3 class="font-display font-semibold text-2xl text-gray-800 mb-3">
+                                        AZM Winter Padel Championship
+                                    </h3>
+                                    <p class="text-gray-600 leading-relaxed mb-4">
+                                        Join our flagship padel tournament featuring 32 teams competing for the championship title. Perfect opportunity to network with mentors and fellow students while enjoying competitive sports.
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                            <div class="flex items-center">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                                Padel Center Dubai
+                                            </div>
+                                            <div class="flex items-center">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                                9:00 AM - 6:00 PM
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-3">
+                                            <div class="text-sm text-gray-500">
+                                                <span class="font-medium text-teal-600">18</span>/32 spots filled
+                                            </div>
+                                            <button class="btn-primary px-6 py-2 rounded-full font-medium" onclick="openBookingModal('padel-tournament')">
+                                                Register Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Progress Bar -->
+                                    <div class="mt-4">
+                                        <div class="progress-bar h-2">
+                                            <div class="progress-fill" style="width: 56.25%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Event Card 2 -->
+                        <div class="event-card rounded-2xl p-6" data-category="workshop">
+                            <div class="grid md:grid-cols-3 gap-6">
+                                <div class="md:col-span-1">
+                                    <img src="resources/event-workshop.jpg" alt="Startup Workshop" class="w-full h-48 object-cover rounded-xl">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-medium">
+                                                Workshop
+                                            </div>
+                                            <div class="text-gray-500 text-sm">Dec 17, 2024</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-2xl font-bold text-gray-800">$25</div>
+                                            <div class="text-gray-500 text-sm">per person</div>
+                                        </div>
+                                    </div>
+                                    <h3 class="font-display font-semibold text-2xl text-gray-800 mb-3">
+                                        Startup Fundamentals Workshop
+                                    </h3>
+                                    <p class="text-gray-600 leading-relaxed mb-4">
+                                        Learn the essentials of building a successful startup from seasoned entrepreneurs. Covering ideation, validation, funding, and scaling strategies in this intensive hands-on workshop.
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                            <div class="flex items-center">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                                Innovation Hub
+                                            </div>
+                                            <div class="flex items-center">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                                2:00 PM - 6:00 PM
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-3">
+                                            <div class="text-sm text-gray-500">
+                                                <span class="font-medium text-purple-600">24</span>/40 spots filled
+                                            </div>
+                                            <button class="btn-primary px-6 py-2 rounded-full font-medium" onclick="openBookingModal('startup-workshop')">
+                                                Register Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Progress Bar -->
+                                    <div class="mt-4">
+                                        <div class="progress-bar h-2">
+                                            <div class="progress-fill" style="width: 60%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Event Card 3 -->
+                        <div class="event-card rounded-2xl p-6" data-category="networking">
+                            <div class="grid md:grid-cols-3 gap-6">
+                                <div class="md:col-span-1">
+                                    <img src="resources/event-workshop.jpg" alt="Networking Event" class="w-full h-48 object-cover rounded-xl">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                                                Networking
+                                            </div>
+                                            <div class="text-gray-500 text-sm">Dec 20, 2024</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-2xl font-bold text-gray-800">Free</div>
+                                            <div class="text-gray-500 text-sm">with registration</div>
+                                        </div>
+                                    </div>
+                                    <h3 class="font-display font-semibold text-2xl text-gray-800 mb-3">
+                                        Year-End Mentor Meetup
+                                    </h3>
+                                    <p class="text-gray-600 leading-relaxed mb-4">
+                                        Celebrate the year's achievements with our mentor community. Join us for an evening of networking, sharing success stories, and planning for the upcoming year. Refreshments provided.
+                                    </p>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                            <div class="flex items-center">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                                Rooftop Lounge
+                                            </div>
+                                            <div class="flex items-center">
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                                7:00 PM - 10:00 PM
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-3">
+                                            <div class="text-sm text-gray-500">
+                                                <span class="font-medium text-green-600">45</span>/80 spots filled
+                                            </div>
+                                            <button class="btn-primary px-6 py-2 rounded-full font-medium" onclick="openBookingModal('networking-event')">
+                                                Register Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Progress Bar -->
+                                    <div class="mt-4">
+                                        <div class="progress-bar h-2">
+                                            <div class="progress-fill" style="width: 56.25%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="booking-modal" class="modal">
+        <div class="modal-content p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-display font-semibold text-2xl text-gray-800">Event Registration</h3>
+                <button onclick="closeBookingModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="booking-content">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-display font-semibold text-2xl text-gray-800">Payment Details</h3>
+                <button onclick="closePaymentModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-800 mb-2">Order Summary</h4>
+                    <div class="flex justify-between items-center">
+                        <span id="event-name-summary">Event Name</span>
+                        <span id="event-price-summary">$0.00</span>
+                    </div>
+                    <div class="border-t border-gray-200 mt-2 pt-2">
+                        <div class="flex justify-between items-center font-semibold">
+                            <span>Total</span>
+                            <span id="total-amount">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <form id="payment-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                        <input type="text" placeholder="1234 5678 9012 3456" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                            <input type="text" placeholder="MM/YY" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                            <input type="text" placeholder="123" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
+                        <input type="text" placeholder="John Doe" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:border-transparent">
+                    </div>
+                    <button type="submit" class="w-full btn-primary py-3 rounded-lg font-semibold">
+                        Complete Payment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="font-display font-bold text-2xl mb-4">
+                        AZM<span class="text-teal-400">.</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed">
+                        Connecting students with industry mentors through innovative platforms and engaging events.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Platform</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="index.html" class="hover:text-teal-400 transition-colors">Find Mentors</a></li>
+                        <li><a href="events.html" class="hover:text-teal-400 transition-colors">Events</a></li>
+                        <li><a href="podcasts.html" class="hover:text-teal-400 transition-colors">Podcasts</a></li>
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Success Stories</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="contact.html" class="hover:text-teal-400 transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Community</a></li>
+                        <li><a href="#" class="hover:text-teal-400 transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-lg mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.347-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 AZM Platform. All rights reserved. Empowering the next generation through mentorship.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>
